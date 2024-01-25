@@ -1,0 +1,72 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d
+    networks:
+      - td4-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
+    networks:
+      - td4-network
+  
+  appbutton:
+    build:
+      context: ./appButton
+      dockerfile: Dockerfile
+    ports:
+      - 80-85:80
+    networks:
+      - td4-network
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=test
+      - DB_PASS=test
+      - DB_NAME=test
+    restart: always
+    scale: 5
+  
+  appviewer:
+    build:
+      context: ./appViewer
+      dockerfile: Dockerfile
+    ports:
+      - 8082-8087:80
+    networks:
+      - td4-network
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=test
+      - DB_PASS=test
+      - DB_NAME=test
+    restart: always
+    scale: 5
+
+networks:
+  td4-network:
