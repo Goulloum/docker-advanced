@@ -9,12 +9,12 @@ services:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://localhost'
     ports:
-      - "8080:80"
+      - "80:80"
       - "8443:443"
     volumes:
-      - "/home/goulloum/Desktop/EFREI/docker-advanced/Gitlab/gitlab/config:/etc/gitlab"
-      - "/home/goulloum/Desktop/EFREI/docker-advanced/Gitlab/gitlab/logs:/var/log/gitlab"
-      - "/home/goulloum/Desktop/EFREI/docker-advanced/Gitlab/gitlab/data:/var/opt/gitlab"
+      - "./gitlab_home/config:/etc/gitlab"
+      - "./gitlab_home/logs:/var/log/gitlab"
+      - "./gitlab_home/data:/var/opt/gitlab"
     networks:
       - gitlab
   gitlab-runner:
@@ -25,10 +25,9 @@ services:
       - web
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - "/home/goulloum/Desktop/EFREI/docker-advanced/Gitlab/gitlab/gitlab-runner:/etc/gitlab-runner"
+      - "./gitlab_home/gitlab-runner:/etc/gitlab-runner"
     networks:
       - gitlab
 
 networks:
   gitlab:
-    name: gitlab-network
