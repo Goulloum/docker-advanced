@@ -3,7 +3,7 @@ services:
   web:
     image: "gitlab/gitlab-ce:latest"
     restart: always
-    hostname: "localhost"
+    hostname: "localhost:8080"
     container_name: gitlab-ce
     environment:
       GITLAB_OMNIBUS_CONFIG: |
@@ -12,9 +12,9 @@ services:
       - "8080:80"
       - "8443:443"
     volumes:
-      - "/home/goulloum/Desktop/EFREI/docker-advanced/Gitlab/gitlab/config:/etc/gitlab"
-      - "/home/goulloum/Desktop/EFREI/docker-advanced/Gitlab/gitlab/logs:/var/log/gitlab"
-      - "/home/goulloum/Desktop/EFREI/docker-advanced/Gitlab/gitlab/data:/var/opt/gitlab"
+      - "/home/goulloum/Desktop/docker/docker-advanced/Gitlab/gitlab/config:/etc/gitlab"
+      - "/home/goulloum/Desktop/docker/docker-advanced/Gitlab/gitlab/logs:/var/log/gitlab"
+      - "/home/goulloum/Desktop/docker/docker-advanced/Gitlab/gitlab/data:/var/opt/gitlab"
     networks:
       - gitlab
   gitlab-runner:
@@ -25,9 +25,13 @@ services:
       - web
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - "/home/goulloum/Desktop/EFREI/docker-advanced/Gitlab/gitlab/gitlab-runner:/etc/gitlab-runner"
+      - "/home/goulloum/Desktop/docker/docker-advanced/Gitlab/gitlab/gitlab-runner:/etc/gitlab-runner"
+      - ./entrypoint.sh:/entrypoint.sh
     networks:
       - gitlab
+    environment:
+      - CI_SERVER_URL=http://gitlab-ce:80
+    entrypoint: ./entrypoint.sh
 
 networks:
   gitlab:
